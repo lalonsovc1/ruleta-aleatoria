@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="//assets.piliapp.com/s3pxy/random/wheel/favicon.ico">
+  <title>La Ruleta Aleatoria</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background-color: snow;
+    }
+
+    .ruleta-container {
+      position: relative;
+      display: inline-block;
+      width: 540px;
+      height: 540px;
+    }
+
+    #wheel {
+      width: 540px;
+      height: 540px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition-duration: 10s;
+      transition-timing-function: cubic-bezier(0.6, 0, 0, 1);
+      transform: rotate(0deg);
+      display: block;
+    }
+
+    #wheel-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 540px;
+      height: 540px;
+      background: #000;
+      border-radius: 50%;
+      box-shadow: 1px 1px 3px rgba(50, 50, 50, 0.75);
+      z-index: 0;
+    }
+
+    /* Pin fijo (flecha) - en este ejemplo está a la derecha apuntando hacia el centro */
+    #wheel-pin {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateX(30%) translateY(-50%) rotate(90deg) scaleX(.7);
+      font-size: 48px;
+      color: red;
+      z-index: 100;
+      text-shadow: 2px -2px 2px #969696;
+      pointer-events: none;
+    }
+
+    /* Centro decorativo */
+    #wheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2em;
+      height: 2em;
+      border-radius: 1em;
+      background: #fff;
+      z-index: 100;
+      box-shadow: 1px 1px 3px rgba(50,50,50,0.75);
+      pointer-events: none;
+    }
+
+    /* Overlay */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #overlayContent {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 400px;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+
+    .opcion {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .opcion input { padding: 4px; }
+    .opcion input[type="number"] { width: 30%; }
+
+    #cerrarOverlay {
+      margin-top: 15px;
+      padding: 8px 16px;
+      background: crimson;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+
+
+
+
+
+    
+.navbar {
+  background-color: #343a40;
+  padding: 16px 25px;
+  display: flex;
+  width: 1300px;
+  align-items: center;
+
+  position: fixed;   /* cambia relative por fixed */
+  top: 0;            /* pegado arriba */
+  left: 50%;         /* centrado */
+  transform: translateX(-50%); /* corrección para centrar */
+  z-index: 1000;     /* para que quede sobre el contenido */
+  font-style: normal;
+}
+
+
+    /* Inicio destacado */
+    .navbar .inicio {
+      font-size: 20px;
+      
+      color: #fff;
+      margin-right: 40px;
+      cursor: pointer;
+    }
+
+    .navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 12px;
+    }
+
+    .navbar ul li a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 15px;
+      transition: color 0.3s, font-size 0.3s;
+    }
+
+    /* Hover */
+    .navbar ul li a:hover {
+      color: #0d6efd;
+    }
+
+    /* Activo */
+    .navbar ul li a.active {
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    /* Botón fullscreen */
+    .fullscreen-btn {
+      position: absolute;
+      right: 20px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      border: solid;
+      border-color: rgba(255, 255, 255, 0.5);
+      border-width: 1px;
+      padding: 11px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .fullscreen-btn:hover {
+      background: #0b5ed7;
+    }
+
+    .rulale {
+    font-size: 38px;      /* tamaño del texto */
+    text-align: center;   /* centrado */
+    margin: 20px 0;       /* espacio arriba y abajo */
+    font-style: normal;
+    
+    color: #313131;
+  }
+  *, ::after, ::before {
+    box-sizing: border-box;
+}
+  .titulo {
+    font-size: 48px;      /* tamaño del texto */
+    font-weight: bold;    /* más grueso */
+    text-align: center;   /* centrado */
+    margin: 20px 0;       /* espacio arriba y abajo */
+  }
+
+
+
+
+ #spin-btn {
+    position: absolute;
+    text-align: center;
+    line-height: 100%;
+    z-index: 300;
+    background: #000;
+    opacity: .6;
+    border-radius: 1rem;
+    color: #fff;
+    font-size: 2rem;
+    top: 50%;
+    left: 50%;
+    display: inline-block;
+    padding: 1rem;
+    transform: translateY(-50%) translateX(-50%);
+    width: 70%;
+    cursor: pointer;
+}
+.rulale, #resultado {
+  position: absolute;
+  top: 10%;          /* centro vertical */
+  left: 50%;         /* centro horizontal */
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 200;      /* encima de la ruleta */
+}
+
+#resultado {
+  display: none;     /* inicialmente oculto */
+  background: rgba(0,0,0,0.7);
+  width: 700px;
+  border-radius: 5px;
+  
+ padding: 5px 18px;  
+  font-size: 34px;
+  flex-direction: row;
+  
+}
+#resultado button {
+  background: white;
+border: solid;
+  color: black;
+  padding: 0px 10px;       /* más pequeño */
+  font-size: 16px;        /* opcional, que sea más pequeño */
+  border-radius: 4px;
+  border-width: 2px;
+  cursor: pointer;
+  justify-content: center;
+  border-color: #000;
+  font-weight: bold;
+
+}
+
+#resultado span {
+  flex: 1;
+  text-align: center;
+
+}
+
+#wheel{
+   pointer-events: none;
+}
+
+
+
+
+.side-panel {
+  position: absolute;
+  top: 10%;
+  left: 68%;
+
+  padding: 10px;
+ align-items: center;
+
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* Botones arriba */
+.top-buttons {
+  display: flex;
+  gap: 10px;
+  border: none;
+  align-items: center;
+}
+
+.top-buttons .btn-big {
+    padding: .5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.top-buttons .btn-small {
+   height: 30px;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+    color: #fff;
+  background-color: #dc3546;
+  border: none;
+    opacity: .65;
+}
+
+/* Textarea con scroll */
+.side-panel textarea {
+     width: 100%;
+    border: 1px solid #000;
+    padding: .5rem .5rem;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    height: 40vh;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+   
+   
+    background: #fff;
+   
+}
+
+
+/* Fila títulos */
+.titles-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  
+}
+.titles-row button{
+    background-color: transparent;
+    border-radius: 4px;
+    color: #6c757d;
+    border-color: #6c757d;
+    padding: 5px 8px;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+
+  
+}
+
+/* Botones con tecla a la izquierda */
+.action-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  font-size: 14px;
+  width: 100%;
+  border: none;
+  
+  background-color: transparent;
+  cursor: pointer;
+
+}
+
+
+/* Círculo de tecla */
+.key-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  width: flex;
+  height: 28px;
+  border-radius: 4px;
+  background: white;
+
+ border: 0.5px solid #000; /* borde más delgado */
+border-color: #000;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.info-text {
+   text-align: left;  
+  font-size: 16px;      /* tamaño legible */
+  color: #333;          /* color gris oscuro */
+  line-height: 1.6;     /* espacio entre líneas */
+  max-width: 690px;     /* ancho máximo para no estirar mucho el texto */
+  margin: 120px auto 0 auto; /* separa del contenido de arriba y centra */
+  padding: 0 10px;      /* un pequeño padding lateral */
+}
+  #btnDerecha {
+    text-decoration: line-through;
+  }
+
+  </style>
+</head>
+<body>
+
+   <nav class="navbar">
+    <div class="inicio">Inicio</div>
+    <ul>
+    
+      <li><a href="#">Ruleta</a></li>
+      <li><a href="#">Dado</a></li>
+      <li><a href="#">Números al azar</a></li>
+      <li><a href="#">Moneda</a></li>
+      <li><a href="#">Barajar</a></li>
+      <li><a href="#">Echar suertes</a></li>
+      <li><a href="#">Temporizador</a></li>
+      <li><a href="#">Reloj</a></li>
+      <li><a href="#">Marcador</a></li>
+    </ul>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">Pantalla completa</button>
+  </nav> <br><br><br><br><br><br>
+
+  <h1 class="rulale">La Ruleta Aleatoria</h1>
+
+
+
+
+<div id="resultado">
+  <button id="btnIzquierda">X</button>
+  <span id="resultadoText"></span>
+  <button id="btnDerecha">S</button>
+</div> <br>
+
+</div>
+  <div class="ruleta-container">
+    <div id="wheel-bg"></div>
+    <canvas id="wheel" width="540" height="540"></canvas>
+    <span id="wheel-pin">▼</span>
+    <span id="wheel-center"></span>
+    <button id="spin-btn">haz clic para girarlo</button>
+  </div>
+
+
+
+<div class="side-panel">
+  <!-- Fila superior botones -->
+  <div class="top-buttons">
+    <button class="btn-big">Iniciar</button>
+    <button class="btn-small">Reiniciar</button>
+  </div>
+
+  <!-- Textarea o lista -->
+  <textarea rows="10">
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+100 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+10 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+nada
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+20 soles
+nada
+50 soles
+nada
+50 soles
+nada
+50 soles
+nada
+50 soles
+nada
+50 soles
+nada
+50 soles
+nada
+50 soles
+nada
+75 soles
+  </textarea>
+
+  <!-- Fila media títulos -->
+  <div class="titles-row">
+    <button>Título</button>
+    <button>Editar</button>
+    <button>Esconder...</button>
+  </div>
+
+  <!-- Fila inferior botones de acción -->
+  <div class="action-buttons">
+    <button><span class="key-circle">SPACE</span> Gíralo</button>
+    <button><span class="key-circle">X</span> Cerrar el banner</button>
+    <button><span class="key-circle">S</span> Ocultar el elemento seleccionado</button>
+    <button><span class="key-circle">R</span> Reiniciar</button>
+    <button><span class="key-circle">E</span> Editar</button>
+    <button><span class="key-circle">F</span> Pantalla completa</button>
+  </div>
+</div>
+
+
+
+
+
+
+  <!-- Overlay -->
+  <div id="overlay">
+    <div id="overlayContent">
+      <h2>Editar recompensas</h2>
+      <div id="listaOpciones"></div>
+      <button id="cerrarOverlay">Cerrar</button>
+    </div>
+  </div>
+<p class="info-text">
+  Esta es una herramienta en línea para elegir el nombre o el artículo al azar. También se llama selector de nombres aleatorios, rueda de nombres o ruleta en línea. A veces es difícil para las personas tomar decisiones. Luego haga una lista de opciones o candidatos existentes y luego seleccione al azar uno de ellos. En este caso, puede utilizar nuestra herramienta para tomar decisiones. Sencillo y divertido. Puede modificar los nombres en textarea, poner un nombre por línea. Los nombres se dibujarán en el círculo. Simplemente haga clic en la rueda circular, comenzará a girar durante unos segundos. El resultado es seleccionar al azar uno de los nombres de la lista. También proporcionamos útiles teclas de acceso directo si está utilizando el escritorio.
+</p>
+  <script>
+
+
+const bellSound = new Audio("//cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/bell_ring.mp3");
+bellSound.volume= 0.15;
+
+function mostrarResultado(opcion) {
+  bellSound.play()
+  const resDiv = document.getElementById("resultado");
+  const resText = document.getElementById("resultadoText");
+  const rulale = document.querySelector(".rulale");
+
+  // Ocultamos título
+  if (rulale) rulale.style.display = "none";
+
+  // Mostramos resultado
+  resDiv.style.display = "flex";
+  resText.textContent = opcion.nombre;
+  resDiv.style.background = opcion.color || "rgba(0,0,0,0.7)";
+}
+
+function cerrarResultado() {
+  const resDiv = document.getElementById("resultado");
+  const rulale = document.querySelector(".rulale");
+
+  // Ocultamos resultado
+  resDiv.style.display = "none";
+
+  // Mostramos título
+  if (rulale) rulale.style.display = "block";
+}
+
+// botones del resultado
+document.getElementById("btnIzquierda").onclick = cerrarResultado;
+document.getElementById("btnDerecha").onclick = cerrarResultado;
+
+
+
+
+const spinBtn = document.getElementById("spin-btn");
+
+spinBtn.addEventListener("click", () => {
+  // Ocultamos resultado anterior si existe
+  document.getElementById("resultado").style.display = "none";
+
+  // Mostramos el título mientras gira
+  const rulale = document.querySelector(".rulale");
+  if (rulale) rulale.style.display = "block";
+
+  // Ocultamos el botón
+  spinBtn.style.display = "none";
+
+  // Llamamos al giro
+  girarRuleta();
+
+  // Suponiendo que la ruleta tarda 5 segundos en girar
+  setTimeout(() => {
+    // Mostramos el botón cuando termina
+    spinBtn.style.display = "block";
+  }, 10000); // Ajusta este tiempo según la duración real del giro
+});
+
+
+function girarRuleta() {
+  // -----------------------------
+  // Elegir índice según porcentaje con chequeo de 100%
+  // -----------------------------
+  function elegirSegunPorcentaje(opciones) {
+    // Primero chequea si hay alguna opción con porcentaje 100%
+    const opcionCien = opciones.find(o => o.porcentaje === 100);
+    if (opcionCien) {
+      return opciones.indexOf(opcionCien);
+    }
+
+    // Si no hay opción 100%, elegir según porcentajes normales
+    const total = opciones.reduce((sum, o) => sum + o.porcentaje, 0);
+    let rnd = Math.random() * total;
+    for (let i = 0; i < opciones.length; i++) {
+      if (rnd < opciones[i].porcentaje) return i;
+      rnd -= opciones[i].porcentaje;
+    }
+    return opciones.length - 1; // fallback
+  }
+
+  const ganadorIndex = elegirSegunPorcentaje(opciones);
+  const elegido = opciones[ganadorIndex];
+
+  // -------------------------------------------------
+  // Resto del código igual para animar la ruleta
+  // -------------------------------------------------
+  const drawStart = -Math.PI / 2;
+  const sliceAngle = (2 * Math.PI) / opciones.length;
+  const targetCenter = drawStart + ganadorIndex * sliceAngle + sliceAngle / 2;
+  const pointerAngle = 0; // pin a la derecha
+  const vueltas = 5;
+  let delta = pointerAngle - (currentRotation + targetCenter);
+  delta = ((delta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const endRotation = currentRotation + vueltas * 2 * Math.PI + delta;
+
+  const slices = [];
+  for (let i = 0; i < opciones.length; i++) {
+    slices.push(drawStart + i * sliceAngle);
+  }
+
+  const spinDuration = 10000;
+  const start = performance.now();
+  let lastAngle = currentRotation % (2 * Math.PI);
+
+  document.querySelector(".rulale").style.display = "block";
+
+  function animate(now) {
+    const elapsed = now - start;
+    const t = Math.min(elapsed / spinDuration, 1);
+    const easeOut = 1 - Math.pow(1 - t, 3);
+    const angle = currentRotation + (endRotation - currentRotation) * easeOut;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(angle);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    dibujarRuleta();
+    ctx.restore();
+
+    // ticks de sonido
+    const relative = (angle + pointerAngle) % (2 * Math.PI);
+    const prev = (lastAngle + pointerAngle) % (2 * Math.PI);
+    for (let s of slices) {
+      const normS = ((s % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      if (prev < normS && relative >= normS) {
+        tickSound.currentTime = 0;
+        tickSound.play();
+      }
+    }
+    lastAngle = angle % (2 * Math.PI);
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      document.querySelector(".rulale").style.display = "none";
+      mostrarResultado({
+        nombre: elegido.nombre,
+        color: coloresBase[ganadorIndex % coloresBase.length]
+      });
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+
+
+
+ // Marcar enlace activo
+    const links = document.querySelectorAll('.navbar ul li a');
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    // Pantalla completa
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    const canvas = document.getElementById('wheel');
+    const ctx = canvas.getContext('2d');
+    const coloresBase = ["royalblue","salmon","palegreen","wheat","plum"];
+  let opciones = [
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "100 soles", porcentaje: 0.5 }, // premio grande raro
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "10 soles", porcentaje: 60 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "20 soles", porcentaje: 10 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "50 soles", porcentaje: 2 },
+  { nombre: "nada", porcentaje: 50 },
+  { nombre: "75 soles", porcentaje: 1 }  // el más raro
+];
+// Mostrar la primera opción desde el inicio
+
+ function dibujarRuleta() {
+  let startAngle = -Math.PI/2; // empieza desde arriba
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const sliceAngle = (2 * Math.PI) / opciones.length; // todos iguales
+
+  opciones.forEach((o, i) => {
+    const endAngle = startAngle + sliceAngle;
+    const color = coloresBase[i % coloresBase.length];
+
+    // sector
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2, canvas.height/2);
+    ctx.arc(canvas.width/2, canvas.height/2, canvas.width/2, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // --- TEXTO centrado ---
+    ctx.save();
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.rotate(startAngle + sliceAngle/2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#000";
+
+    let maxWidth = canvas.width/2 - 20;
+    let fontSize = 10; // fijo para que todos se vean iguales
+    ctx.font = ` ${fontSize}px Arial`;
+    ctx.fillText(o.nombre, canvas.width/2 - 10, 5);
+
+    ctx.restore();
+    // ----------------------
+
+    startAngle = endAngle;
+  });
+}
+
+
+    // ------------ Manejo del giro y selección correcta según el pin fijo ------------
+    // Ajusta esto si tu pin está en otra posición:
+    // - Si tu pin está a la derecha (como en el CSS actual): pointerAngleDeg = 0
+    // - Si tu pin está arriba: pointerAngleDeg = 270
+    // - Si tu pin está a la izquierda: pointerAngleDeg = 180
+    // - Si tu pin está abajo: pointerAngleDeg = 90
+    const pointerAngleDeg = 0; // aquí pones 0 porque tu #wheel-pin está a la derecha
+let currentRotation = 0; // rotación acumulada
+const tickSound = new Audio("//cdnjs.cloudflare.com/ajax/libs/blockly/1.0.0/media/disconnect.mp3");
+
+canvas.addEventListener('click', () => {
+  const ganadorIndex = Math.floor(Math.random() * opciones.length);
+  const elegido = opciones[ganadorIndex];
+
+  const drawStart = -Math.PI / 2;
+  const sliceAngle = (2 * Math.PI) / opciones.length;
+  const targetCenter = drawStart + ganadorIndex * sliceAngle + sliceAngle / 2;
+
+  const pointerAngle = 0; // pin a la derecha
+
+  const vueltas = 5;
+  let delta = pointerAngle - (currentRotation + targetCenter);
+  delta = ((delta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const endRotation = currentRotation + vueltas * 2 * Math.PI + delta;
+
+  // preparamos bordes de cada sector
+  const slices = [];
+  for (let i = 0; i < opciones.length; i++) {
+    slices.push(drawStart + i * sliceAngle);
+  }
+
+  const spinDuration = 5000;
+  const start = performance.now();
+  let lastAngle = currentRotation % (2 * Math.PI);
+
+  function animate(now) {
+    const elapsed = now - start;
+    const t = Math.min(elapsed / spinDuration, 1);
+    const easeOut = 1 - Math.pow(1 - t, 3);
+    const angle = currentRotation + (endRotation - currentRotation) * easeOut;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(angle);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    dibujarRuleta();
+    ctx.restore();
+
+    // --- reproducir tick cuando el pin cruza un borde ---
+    const relative = (angle + pointerAngle) % (2 * Math.PI);
+    const prev = (lastAngle + pointerAngle) % (2 * Math.PI);
+    for (let s of slices) {
+      const normS = ((s % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      if (prev < normS && relative >= normS) {
+        tickSound.currentTime = 0;
+        tickSound.play();
+      }
+    }
+    lastAngle = angle % (2 * Math.PI);
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      // en lugar del alert, mostramos el rectángulo
+ // Ocultamos el título solo cuando termina el giro
+    const rulale = document.querySelector(".rulale");
+    if (rulale) rulale.style.display = "none";
+
+    // Mostramos el resultado
+    mostrarResultado({
+      nombre: elegido.nombre,
+      color: coloresBase[ganadorIndex % coloresBase.length]
+    });
+    }
+  }
+  requestAnimationFrame(animate);
+});
+
+
+
+
+    // Overlay (igual que antes)
+    const overlay = document.getElementById('overlay');
+    const cerrarOverlay = document.getElementById('cerrarOverlay');
+    const listaOpciones = document.getElementById('listaOpciones');
+
+    function toggleOverlay(show) {
+      overlay.style.display = show ? "flex" : "none";
+      if (show) renderOpciones();
+      else dibujarRuleta();
+    }
+
+    cerrarOverlay.addEventListener('click', () => toggleOverlay(false));
+    document.addEventListener('keydown', (c) => {
+      if (e.key.toLowerCase() === "e") {
+        toggleOverlay(overlay.style.display !== "flex");
+      }
+    });
+
+    function renderOpciones() {
+      listaOpciones.innerHTML = '';
+      opciones.forEach((o,i)=>{
+        const div = document.createElement('div');
+        div.className = 'opcion';
+        div.innerHTML = `
+          <input type="text" value="${o.nombre}" data-i="${i}" data-type="nombre">
+          <input type="number" value="${o.porcentaje}" min="1" max="100" data-i="${i}" data-type="porcentaje"> %`;
+        listaOpciones.appendChild(div);
+      });
+
+      listaOpciones.querySelectorAll('input').forEach(inp=>{
+        inp.addEventListener('input', e=>{
+          const i = e.target.dataset.i;
+          const type = e.target.dataset.type;
+          opciones[i][type] = type === "porcentaje" ? parseInt(e.target.value) : e.target.value;
+        });
+      });
+    }
+
+    // inicial
+    dibujarRuleta();
+  </script>
+</body>
+</html>
