@@ -979,7 +979,7 @@ canvas.addEventListener('click', () => {
     }
 
     cerrarOverlay.addEventListener('click', () => toggleOverlay(false));
-    document.addEventListener('keydown', (c) => {
+    document.addEventListener('keydown', (e) => {
       if (e.key.toLowerCase() === "c") {
         toggleOverlay(overlay.style.display !== "flex");
       }
